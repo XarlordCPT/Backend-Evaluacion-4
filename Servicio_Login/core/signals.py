@@ -24,3 +24,12 @@ def actualizar_is_staff_por_rol(sender, instance, **kwargs):
         # Si no tiene rol, mantener is_staff como está (no cambiar)
         pass
 
+
+
+# from django.contrib.auth.signals import user_logged_in
+# @receiver(user_logged_in)
+# def enviar_evento_login(sender, user, request, **kwargs):
+#     pass
+    # Implementar KafkaProducerClient similar al de Mantenedor
+    # payload = {'usuario': user.username, 'accion': 'LOGIN', 'origen': 'login'}
+    # producer.send_message('eventos-auth', payload)

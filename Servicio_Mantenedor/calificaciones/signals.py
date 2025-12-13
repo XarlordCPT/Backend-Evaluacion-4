@@ -2,7 +2,10 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.db import transaction
 import threading
-from .models import Calificacion, Reporte
+from django.conf import settings
+from utils.kafka_client import KafkaProducerClient
+from datetime import datetime
+from .models import Calificacion
 
 # Thread-local storage para almacenar el usuario actual
 _thread_locals = threading.local()
@@ -15,10 +18,27 @@ def set_current_user(user):
     """Establece el usuario actual en el thread-local storage"""
     _thread_locals.user = user
 
+def enviar_evento_reporte(usuario, accion):
+    """Helper para enviar evento a Kafka"""
+    try:
+        username = usuario.username if usuario else "Sistema"
+        
+        payload = {
+            'usuario': username,
+            'accion': accion,
+            'fecha': datetime.now().isoformat(),
+            'origen': 'mantenedor'
+        }
+        
+        client = KafkaProducerClient()
+        client.send_message(settings.KAFKA_TOPIC_REPORTES, payload)
+    except Exception as e:
+        print(f"Error al enviar evento Kafka: {e}")
+
 @receiver(post_save, sender=Calificacion)
 def registrar_accion_calificacion(sender, instance, created, **kwargs):
     """
-    Registra en Reporte cuando se crea o modifica una calificación.
+    Emite evento Kafka cuando se crea o modifica una calificación.
     """
     usuario = get_current_user()
     
@@ -44,21 +64,17 @@ def registrar_accion_calificacion(sender, instance, created, **kwargs):
         else:
             accion = f"Calificación modificada: ID {instance.id_calificacion} - Instrumento: {instrumento_nombre}, Ejercicio: {ejercicio_nombre}"
         
-        # Crear el reporte en una transacción separada para evitar problemas
-        with transaction.atomic():
-            Reporte.objects.create(
-                usuario=usuario,
-                accion=accion
-            )
+        # Enviar evento async
+        enviar_evento_reporte(usuario, accion)
+            
     except Exception as e:
-        # Si hay un error al crear el reporte, no queremos que falle la operación principal
-        # Solo logueamos el error (en producción usarías logging)
+        # Log error but don't stop flow
         pass
 
 @receiver(pre_delete, sender=Calificacion)
 def registrar_eliminacion_calificacion(sender, instance, **kwargs):
     """
-    Registra en Reporte cuando se elimina una calificación.
+    Emite evento Kafka cuando se elimina una calificación.
     """
     usuario = get_current_user()
     
@@ -83,14 +99,6 @@ def registrar_eliminacion_calificacion(sender, instance, **kwargs):
     except:
         accion = f"Calificación eliminada: ID {instance.id_calificacion}"
     
-    # Crear el reporte
-    try:
-        with transaction.atomic():
-            Reporte.objects.create(
-                usuario=usuario,
-                accion=accion
-            )
-    except Exception as e:
-        # Si hay un error al crear el reporte, no queremos que falle la operación principal
-        pass
+    # Enviar evento async
+    enviar_evento_reporte(usuario, accion)
 
