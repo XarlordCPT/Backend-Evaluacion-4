@@ -1,0 +1,54 @@
+package.json = instalar librerias
+
+vite.config.js = config del server
+
+index.html = base del proyecto
+             
+node_modules = no tocar
+
+.gitignore = dice a git q no subir
+
+scr = tiene todo el codigo
+
+    - main.jsx = no tocar
+    - app.jsx = 
+    - index.css = estilos globales
+    
+assets = imagenes
+        import logo from './assets/logo.png'
+
+--- 
+npm install antd
+
+npm install react-data-table-component
+npm install papaparse
+---
+COLOCAR ENCIMA DE TODOS los head
+<script src="https://cdn.tailwindcss.com"></script>
+
+https://tailwind-generator.com/
+https://uicolors.app/generate/863c37
+
+guia de tailwindcss
+https://tailwindcss.504b.cc/
+
+
+hacer pagina en react, dioseños botones, login:
+
+cada ves que se solicite datos, ( formularios, tablas) 
+se coloca console.log
+
+separar urls (react router dom) 
+
+login
+tabla pag principal
+boton de agregar
+boton de modificar
+boton de eliminar
+filtro
+carga masiva
+
+
+
+
+    

@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+
+
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variables
+# Ignora archivos .env con credenciales reales, pero permite .env.example (template)
+.env
+.env.local
+*.env
+!*.env.example
+
+# Credentials
+Credencialposgre.txt
+*.key
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (si hay node_modules en el backend)
+node_modules/
+package-lock.json
+
