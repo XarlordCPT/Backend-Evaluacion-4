@@ -1,129 +1,63 @@
 # Sistema de Gestión de Eventos Tecnológicos (NUAM)
 
-Este proyecto es una plataforma de microservicios para la gestión de eventos, usuarios y reportes, utilizando Django (Backend), React/Vite (Frontend) y Kafka para la comunicación asíncrona.
+Plataforma de microservicios para la gestión de eventos, usuarios y reportes.
+
+## ⚠️ Recordatorio de Servicios: Base de Datos
+
+Este proyecto fue desarrollado y probado principalmente utilizando una **Base de Datos Online** (en la nube).
+
+*   **Si tienes una Base de Datos Online**: Simplemente coloca tus credenciales (Host, User, Password, DB Name) en el archivo `.env` que configurarás más adelante.
+*   **Si usarás una Base de Datos Local**: Deberás crear la base de datos manualmente en tu motor PostgreSQL.
+    *   **Rápido (Local):** Abre tu terminal de SQL y ejecuta: `CREATE DATABASE nuam_db;`
+
+> **Nota Adicional**: Para el funcionamiento de la mensajería asíncrona, es necesario tener **Docker Desktop** instalado y corriendo para levantar Kafka.
 
 ---
 
-## 📋 Requisitos Previos
+## 🚀 Instalación y Puesta en Marcha
 
-Antes de comenzar, asegúrate de tener instalado:
-
-1.  **Python 3.10+**: [Descargar Python](https://www.python.org/downloads/)
-    *   *Windows*: Asegúrate de marcar "Add Python to PATH" durante la instalación.
-2.  **Node.js (LTS)**: [Descargar Node.js](https://nodejs.org/)
-3.  **Docker Desktop**: [Descargar Docker](https://www.docker.com/products/docker-desktop/) (Necesario **solo** para correr Kafka, no para los servicios).
-4.  **PostgreSQL (Local)**: Debes tener una instancia de PostgreSQL corriendo en tu máquina (puerto 5432).
-
----
-
-## 🚀 Instalación y Configuración
-
-Sigue estos pasos en orden para levantar el proyecto.
+Sigue estos pasos en estricto orden para levantar el entorno completo.
 
 ### 1. Clonar el Repositorio
+
 ```bash
 git clone <URL_DEL_REPOSITORIO>
 cd Backend-Evaluacion-4
 ```
 
 ### 2. Configurar Variables de Entorno (.env)
-El proyecto **NO** incluye el archivo `.env` por seguridad. Debes crearlo manualmente basándote en el ejemplo proporcionado.
+
+El archivo de configuración de entorno no se incluye por seguridad. Debes crearlo a partir del ejemplo.
 
 1.  Copia el archivo `.env.example` y renómbralo a `.env`:
     *   **Windows:** `copy .env.example .env`
     *   **Linux/Mac:** `cp .env.example .env`
 
-2.  Edita el nuevo archivo `.env` con tus credenciales. Tienes dos opciones:
+2.  Abre el archivo `.env` y configura tus credenciales de base de datos (según lo mencionado en el recordatorio arriba).
 
-    **Opción A: Base de Datos Local (Recomendado para desarrollo)**
-    Si tienes PostgreSQL instalado en tu PC:
-    ```ini
-    DB_NAME=nuam_db
-    DB_USER=postgres
-    DB_PASSWORD=tu_password  <-- CÁMBIALO
-    DB_HOST=localhost
-    ```
+### 3. Instalar Dependencias
 
-    **Opción B: Base de Datos Online (Nube)**
-    Si usas una base de datos remota (AWS RDS, Supabase, Neon, etc.):
-    ```ini
-    DB_NAME=postgres
-    DB_USER=usuario_remoto
-    DB_PASSWORD=password_remoto
-    DB_HOST=tuhost.aws.com
-    DB_PORT=5432
-    ```
-    > **⚠️ IMPORTANTE:** Si usas una base de datos online, asegúrate de que **permita conexiones externas** (reglas de Firewall/Security Groups) y que uses la versión de PostgreSQL 13 o superior.
+Se deben instalar las librerías necesarias tanto para Python (Backend) como para Node.js (Frontend). Hemos preparado scripts automáticos para esto.
 
-### 3. Requisitos de la Base de Datos
-Ya sea local u online, es **CRÍTICO** que tu base de datos cumpla con lo siguiente antes de iniciar:
-
-1.  **Debe existir la Base de Datos:**
-    El sistema no crea la base de datos por ti. Debes crearla manualmente:
-    ```sql
-    CREATE DATABASE nuam_db;
-    ```
-    *(O el nombre que hayas puesto en `DB_NAME`)*.
-
-2.  **Codificación UTF-8:**
-    Asegúrate de que la base de datos use codificación `UTF8` para evitar errores con caracteres especiales (tildes, ñ).
-    ```sql
-    -- Verificar encoding
-    SHOW SERVER_ENCODING;
-    ```
-
-### 4. Instalar Dependencias
-Ejecuta el script de instalación correspondiente a tu sistema operativo. Este script creará un entorno virtual Python y descargará todo lo necesario.
-
-*   **Windows**: Doble clic en `install_dependencies.bat`
+*   **Windows**: Ejecuta (doble clic) `install_dependencies.bat`
 *   **Linux/Mac**:
     ```bash
     chmod +x install_dependencies.sh
     ./install_dependencies.sh
     ```
 
-### 4. Crear Base de Datos
-Asegúrate de haber creado la base de datos vacía en tu Postgres local:
-```sql
-CREATE DATABASE nuam_db;
-```
+> Este proceso creará un entorno virtual, instalará los requerimientos del `requirements.txt` y las dependencias del frontend.
 
-### 5. Migraciones Iniciales
-Debes aplicar las migraciones para crear las tablas en tu base de datos.
-Abre una terminal, activa el entorno virtual (`Ambiente-Microservicios\Scripts\activate`) y ejecuta:
+### 4. Ejecución del Proyecto
 
-```bash
-cd Servicio_Login
-python manage.py migrate
-cd ..\Servicio_Mantenedor
-python manage.py migrate
-cd ..\Servicio_Reportes
-python manage.py migrate
-```
+Una vez configurado e instalado, utiliza los scripts de inicio para levantar todos los servicios (Django, React y Kafka) simultáneamente.
 
----
-
-## ▶️ Ejecución del Proyecto
-
-Hemos simplificado el inicio de todos los servicios (Frontend, Backend y Kafka) en un solo script.
-
-### Windows
-1.  Asegúrate de que **Docker Desktop** esté abierto (para Kafka).
-2.  Haz **doble clic** en el archivo:
-    👉 **`start_services.bat`**
-
-### Linux / Mac
-1.  Asegúrate de que el servicio Docker esté corriendo.
-2.  Ejecuta:
+*   **Windows**: Ejecuta (doble clic) `start_services.bat`
+*   **Linux/Mac**:
     ```bash
     chmod +x start_services.sh
     ./start_services.sh
     ```
-
-Esto abrirá varias ventanas de terminal:
-*   1 ventana para el **Frontend** (Vite)
-*   3 ventanas para los **Microservicios** (Login, Mantenedor, Reportes)
-*   1 ventana para el **Consumidor Kafka**
 
 ---
 
@@ -148,11 +82,31 @@ Si ves errores de conexión en las consolas negras:
 
 ---
 
-## 📦 Estructura del Proyecto
+## 📂 Estructura del Sistema
 
-*   **NUAM/**: Frontend (React + Vite)
-*   **Servicio_Login/**: Microservicio de autenticación (Django)
-*   **Servicio_Mantenedor/**: Gestión de eventos y usuarios (Django)
-*   **Servicio_Reportes/**: Generación de reportes y analíticas (Django)
-*   **certs/**: Certificados SSL locales
-*   **scripts/**: Scripts de utilidad (generador de certificados)
+A continuación se presenta el árbol de directorios del sistema completo:
+
+```text
+Backend-Evaluacion-4/
+├── .env                       # Variables de entorno configuración
+├── docker-compose.yml         # Configuración de servicios Docker (Kafka/Zookeeper)
+├── requirements.txt           # Dependencias globales de Python
+├── install_dependencies.bat   # Script de instalación Windows
+├── start_services.bat         # Script de inicio Windows
+├── Ambiente-Microservicios/   # Entorno Virtual (creado tras instalación)
+├── NUAM/                      # Frontend (React + Vite)
+│   ├── src/
+│   ├── public/
+│   └── package.json
+├── Servicio_Login/            # Microservicio de Autenticación
+│   ├── manage.py
+│   └── ...
+├── Servicio_Mantenedor/       # Microservicio de Gestión (Eventos/Usuarios)
+│   ├── manage.py
+│   └── ...
+├── Servicio_Reportes/         # Microservicio de Reportes
+│   ├── manage.py
+│   └── ...
+├── certs/                     # Certificados SSL para HTTPS local
+└── scripts/                   # Scripts de utilidad
+```
