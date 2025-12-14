@@ -42,33 +42,38 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const data = await authService.login(username, password);
-      
+
       const payload = JSON.parse(atob(data.access.split('.')[1]));
       const userData = {
         username: payload.username,
         rol: payload.rol,
         rut: payload.rut,
       };
-      
+
       setUser(userData);
       setIsAuthenticated(true);
       return { success: true };
     } catch (error) {
       setIsAuthenticated(false);
       setUser(null);
-      return { 
-        success: false, 
-        error: error.message || 'Error al iniciar sesión' 
+      return {
+        success: false,
+        error: error.message || 'Error al iniciar sesión'
       };
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = () => {
-    authService.logout();
-    setUser(null);
-    setIsAuthenticated(false);
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error("Error durante logout:", error);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+    }
   };
 
   const value = {

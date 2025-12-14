@@ -17,6 +17,7 @@ export const API_ENDPOINTS = {
     PASSWORD_RESET_VALIDATE: `${API_BASE_URL_AUTH}/api/auth/password-reset/validate/`,
     PASSWORD_RESET_VERIFY: `${API_BASE_URL_AUTH}/api/auth/password-reset/verify/`,
     PROFILE: `${API_BASE_URL_AUTH}/api/auth/profile/`,
+    LOGOUT: `${API_BASE_URL_AUTH}/api/auth/logout/`,
   },
   // Calificaciones - Servicio Mantenedor (Puerto 8002) y Reportes (Puerto 8003)
   CALIFICACIONES: {

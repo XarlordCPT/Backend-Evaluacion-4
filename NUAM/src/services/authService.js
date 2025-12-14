@@ -29,11 +29,11 @@ class AuthService {
       }
 
       const data = await response.json();
-      
+
       // Guardar tokens en localStorage
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
-      
+
       return data;
     } catch (error) {
       console.error('Error en login:', error);
@@ -71,7 +71,7 @@ class AuthService {
    */
   async refreshAccessToken() {
     const refreshToken = this.getRefreshToken();
-    
+
     if (!refreshToken) {
       throw new Error('No hay token de refresh disponible');
     }
@@ -91,7 +91,7 @@ class AuthService {
 
       const data = await response.json();
       localStorage.setItem('access_token', data.access);
-      
+
       return data.access;
     } catch (error) {
       console.error('Error al refrescar token:', error);
@@ -101,11 +101,27 @@ class AuthService {
   }
 
   /**
-   * Cierra la sesión y elimina los tokens
+   * Cierra la sesión, notifica al backend y elimina los tokens
    */
-  logout() {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+  async logout() {
+    try {
+      const token = this.getAccessToken();
+      if (token) {
+        await fetch(API_ENDPOINTS.AUTH.LOGOUT, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error notificando logout al backend:', error);
+      // Continuamos con el logout local aunque falle el backend
+    } finally {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+    }
   }
 
   /**

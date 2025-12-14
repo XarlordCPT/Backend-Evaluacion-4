@@ -7,7 +7,8 @@ from .views import (
     request_password_reset,
     validate_reset_code,
     verify_reset_code,
-    get_user_profile
+    get_user_profile,
+    logout_view
 )
 from rest_framework_simplejwt.views import (TokenRefreshView, TokenVerifyView)
 
@@ -32,4 +33,6 @@ urlpatterns = [
     path('password-reset/verify/', verify_reset_code, name='password_reset_verify'),
     # GET /api/auth/profile/ - Obtener perfil del usuario autenticado
     path('profile/', get_user_profile, name='get_user_profile'),
+    # POST /api/auth/logout/ - Cierre de sesión (solo auditoría)
+    path('logout/', logout_view, name='logout'),
 ]
