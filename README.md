@@ -2,6 +2,20 @@
 
 Plataforma de microservicios para la gestión de eventos, usuarios y reportes.
 
+---
+
+## 📋 Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalado:
+
+1.  **Python 3.10+**: [Descargar Python](https://www.python.org/downloads/)
+    *   *Windows*: Asegúrate de marcar "Add Python to PATH" durante la instalación.
+2.  **Node.js (LTS)**: [Descargar Node.js](https://nodejs.org/)
+3.  **Docker Desktop**: [Descargar Docker](https://www.docker.com/products/docker-desktop/) (Necesario **solo** para correr Kafka).
+4.  **Git**: [Descargar Git](https://git-scm.com/downloads)
+
+---
+
 ## ⚠️ Recordatorio de Servicios: Base de Datos
 
 Este proyecto fue desarrollado y probado principalmente utilizando una **Base de Datos Online** (en la nube).

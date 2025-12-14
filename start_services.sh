@@ -24,7 +24,7 @@ if ! docker info > /dev/null 2>&1; then
     echo "[ERROR] Docker no está corriendo o no tienes permisos."
     exit 1
 fi
-docker-compose up -d
+sudo docker compose up -d
 
 # 1. Activar entorno virtual
 if [ -f "Ambiente-Microservicios/bin/activate" ]; then
