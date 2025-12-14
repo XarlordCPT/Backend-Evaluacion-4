@@ -26,6 +26,18 @@ if ! docker info > /dev/null 2>&1; then
 fi
 sudo docker compose up -d
 
+echo "Esperando a que Kafka inicie (Puerto 9092)..."
+# Loop de espera (hasta 30 intentos, 2 segundos cada uno)
+for i in {1..30}; do
+    if nc -z localhost 9092 2>/dev/null; then
+        echo "Kafka está listo!"
+        break
+    fi
+    echo "Esperando Kafka... ($i/30)"
+    sleep 2
+done
+
+
 # 1. Activar entorno virtual
 if [ -f "Ambiente-Microservicios/bin/activate" ]; then
     source Ambiente-Microservicios/bin/activate
