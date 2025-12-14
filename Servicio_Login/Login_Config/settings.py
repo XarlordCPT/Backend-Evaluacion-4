@@ -1,9 +1,9 @@
-from pathlib import Path
+﻿from pathlib import Path
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Configuración desde variables de entorno (.env)
+# ConfiguraciÃ³n desde variables de entorno (.env)
 # Si no existe .env, usa valores por defecto (solo para desarrollo)
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-9e$n2+jr-h5q9^hncb5)vvl3$_11g!uc71y5%!k9=*&$13&f!n')
 DEBUG = config('DEBUG', default=True, cast=bool)
@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'djoser',
+    'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -108,8 +109,8 @@ REST_FRAMEWORK = {
 from datetime import timedelta
 
 # JWT: Frontend debe enviar token en header "Authorization: Bearer <token>"
-# Token de acceso válido por 60 minutos, refresh token por 1 día
-# Ver: NUAM/src/services/authService.js - método getAuthHeaders()
+# Token de acceso vÃ¡lido por 60 minutos, refresh token por 1 dÃ­a
+# Ver: NUAM/src/services/authService.js - mÃ©todo getAuthHeaders()
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -154,7 +155,7 @@ CACHES = {
 
 AUTH_USER_MODEL = 'core.Usuario'
 
-# Email SMTP: Usado para envío de códigos de recuperación de contraseña
+# Email SMTP: Usado para envÃ­o de cÃ³digos de recuperaciÃ³n de contraseÃ±a
 # Endpoint: /api/auth/password-reset/request/ (core/views.py - request_password_reset)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
@@ -167,3 +168,25 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # Kafka Configuration
 KAFKA_BOOTSTRAP_SERVERS = config('KAFKA_BOOTSTRAP_SERVERS', default='localhost:9092')
 KAFKA_TOPIC_REPORTES = config('KAFKA_TOPIC_REPORTES', default='eventos-reportes')
+
+
+# --- SECURITY CONFIGURATION ---
+if not DEBUG or True:  # Forzamos para demostración
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+# --- SECURITY CONFIGURATION ---
+if not DEBUG or True:  # Forzamos para demostración
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+CORS_ALLOW_ALL_ORIGINS = True

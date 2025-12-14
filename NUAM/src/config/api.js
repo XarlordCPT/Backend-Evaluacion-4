@@ -2,9 +2,10 @@
 // Backend corre en: http://localhost:8000
 // Para cambiar: crear archivo .env con VITE_API_BASE_URL=https://tu-backend.com
 // Configuración de endpoints para Microservicios
-export const API_BASE_URL_AUTH = import.meta.env.VITE_API_URL_AUTH || 'http://localhost:8001';
-export const API_BASE_URL_MANTENEDOR = import.meta.env.VITE_API_URL_MANTENEDOR || 'http://localhost:8002';
-export const API_BASE_URL_REPORTES = import.meta.env.VITE_API_URL_REPORTES || 'http://localhost:8003';
+// Configuración de endpoints para Microservicios
+export const API_BASE_URL_AUTH = import.meta.env.VITE_API_URL_AUTH || 'https://localhost:8001';
+export const API_BASE_URL_MANTENEDOR = import.meta.env.VITE_API_URL_MANTENEDOR || 'https://localhost:8002';
+export const API_BASE_URL_REPORTES = import.meta.env.VITE_API_URL_REPORTES || 'https://localhost:8003';
 
 export const API_ENDPOINTS = {
   // Autenticación - Servicio Login (Puerto 8001)

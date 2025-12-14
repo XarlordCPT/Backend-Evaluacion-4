@@ -1,32 +1,44 @@
 @echo off
-echo Iniciando Sistema de Microservicios NUAM...
+echo Iniciando Sistema de Microservicios NUAM (Modo SSL)...
 
-:: Iniciar Infraestructura (Kafka + Zookeeper)
-echo Iniciando Docker Containers...
+:: 0. Verificar Infraestructura (Kafka + Zookeeper)
+echo Verificando estado de Docker...
 docker-compose up -d
 
-:: Esperar unos segundos para que Kafka levante (opcional pero recomendado)
-timeout /t 5 /nobreak >nul
-
-:: Activar entorno virtual (ajusta la ruta si es necesario)
+:: 1. Activar entorno virtual
 if exist "Ambiente-Microservicios\Scripts\activate.bat" (
     call Ambiente-Microservicios\Scripts\activate.bat
+) else (
+    echo [ERROR] No se encontro el entorno virtual "Ambiente-Microservicios".
+    pause
+    exit /b
 )
 
-:: Iniciar Servicio Login (Puerto 8001)
-start "Servicio Login (8001)" cmd /k "cd Servicio_Login && python manage.py runserver 8001"
+:: 2. Asegurar dependencias SSL instaladas
+echo Instalando dependencias SSL requeridas...
+pip install pyOpenSSL django-sslserver
 
-:: Iniciar Servicio Mantenedor (Puerto 8002)
-start "Servicio Mantenedor (8002)" cmd /k "cd Servicio_Mantenedor && python manage.py runserver 8002"
+:: 3. Gestión de Certificados SSL
+echo Verificando certificados SSL...
+python scripts/cert_manager.py
 
-:: Iniciar Servicio Reportes (Puerto 8003 - API)
-start "Servicio Reportes (8003)" cmd /k "cd Servicio_Reportes && python manage.py runserver 8003"
+:: 3. Iniciar Servicios con SSL (runsslserver)
 
-:: Iniciar Consumidor Kafka Reportes
+:: Login (Puerto 8001 -> HTTPS)
+start "Servicio Login (HTTPS 8001)" cmd /k "cd Servicio_Login && python manage.py runsslserver 0.0.0.0:8001 --certificate ../certs/server.crt --key ../certs/server.key"
+
+:: Mantenedor (Puerto 8002 -> HTTPS)
+start "Servicio Mantenedor (HTTPS 8002)" cmd /k "cd Servicio_Mantenedor && python manage.py runsslserver 0.0.0.0:8002 --certificate ../certs/server.crt --key ../certs/server.key"
+
+:: Reportes (Puerto 8003 -> HTTPS)
+start "Servicio Reportes (HTTPS 8003)" cmd /k "cd Servicio_Reportes && python manage.py runsslserver 0.0.0.0:8003 --certificate ../certs/server.crt --key ../certs/server.key"
+
+:: Consumidor Kafka (Reportes)
 start "Consumer Reportes Kafka" cmd /k "cd Servicio_Reportes && python manage.py iniciar_consumidor_reportes"
 
-:: Iniciar Frontend
-start "Frontend NUAM" cmd /k "cd NUAM && npm run dev"
+:: Frontend
+:: Nota: El frontend debe estar configurado para apuntar a HTTPS
+start "Frontend NUAM" cmd /k "cd NUAM && npm install --legacy-peer-deps && npm run dev"
 
-echo Todos los servicios e infraestructura han sido iniciados.
+echo Todos los servicios han sido iniciados en modo SEGURO (HTTPS).
 pause
