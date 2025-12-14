@@ -107,6 +107,16 @@ Si ves errores de conexión en las consolas negras:
 
 ---
 
+## 📚 Documentación de API (Swagger)
+
+El sistema incluye documentación automática de los endpoints disponible en:
+
+*   **Servicio Mantenedor**: [https://localhost:8002/api/docs/](https://localhost:8002/api/docs/)
+*   **Servicio Reportes**: [https://localhost:8003/api/docs/](https://localhost:8003/api/docs/)
+
+
+---
+
 ## 📂 Estructura del Sistema
 
 A continuación se presenta el árbol de directorios del sistema completo:
