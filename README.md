@@ -113,25 +113,31 @@ A continuación se presenta el árbol de directorios del sistema completo:
 
 ```text
 Backend-Evaluacion-4/
-├── .env                       # Variables de entorno configuración
+├── .env                       # Variables de entorno (Configuración)
 ├── docker-compose.yml         # Configuración de servicios Docker (Kafka/Zookeeper)
 ├── requirements.txt           # Dependencias globales de Python
-├── install_dependencies.bat   # Script de instalación Windows
-├── start_services.bat         # Script de inicio Windows
-├── Ambiente-Microservicios/   # Entorno Virtual (creado tras instalación)
+├── install_dependencies.bat   # Script de instalación automática (Windows)
+├── install_dependencies.sh    # Script de instalación automática (Linux/Mac)
+├── start_services.bat         # Script de inicio seguro (Windows)
+├── start_services.sh          # Script de inicio seguro (Linux/Mac)
+├── MANUAL_USUARIO.md          # Manual de uso para el usuario final
+├── Ambiente-Microservicios/   # Entorno Virtual Python (ignorado en git)
 ├── NUAM/                      # Frontend (React + Vite)
 │   ├── src/
 │   ├── public/
 │   └── package.json
 ├── Servicio_Login/            # Microservicio de Autenticación
-│   ├── manage.py
-│   └── ...
+│   ├── core/
+│   ├── Login_Config/
+│   └── manage.py
 ├── Servicio_Mantenedor/       # Microservicio de Gestión (Eventos/Usuarios)
-│   ├── manage.py
-│   └── ...
-├── Servicio_Reportes/         # Microservicio de Reportes
-│   ├── manage.py
-│   └── ...
-├── certs/                     # Certificados SSL para HTTPS local
-└── scripts/                   # Scripts de utilidad
+│   ├── core/
+│   ├── Mantenedor_Config/
+│   └── manage.py
+├── Servicio_Reportes/         # Microservicio de Reportes y Kafka
+│   ├── core/
+│   ├── Reportes_Config/
+│   └── manage.py
+├── certs/                     # Certificados SSL para HTTPS (ignorado en git)
+└── scripts/                   # Scripts de utilidad (generador certificados)
 ```
