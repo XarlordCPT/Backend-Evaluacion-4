@@ -1,5 +1,6 @@
 from django.db.models.signals import pre_delete
 from django.shortcuts import render
+import logging
 from django.db.models import Count, Q, Avg, Sum
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
@@ -18,26 +19,41 @@ from .serializers import (CalificacionSerializer, FactorSerializer, InstrumentoS
 from .signals import set_current_user
 
 class MercadoViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar operaciones CRUD de Mercados.
+    """
     queryset = Mercado.objects.all()
     serializer_class = MercadoSerializer
     permission_classes = [permissions.AllowAny]
 
 class TipoAgregacionViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar operaciones CRUD de Tipos de Agregación.
+    """
     queryset = TipoAgregacion.objects.all()
     serializer_class = TipoAgregacionSerializer
     permission_classes = [permissions.AllowAny]
 
 class EjercicioViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar operaciones CRUD de Ejercicios.
+    """
     queryset = Ejercicio.objects.all()
     serializer_class = EjercicioSerializer
     permission_classes = [permissions.AllowAny]
 
 class InstrumentoViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para gestionar instrumentos financieros.
+    """
     queryset = Instrumento.objects.all()
     serializer_class = InstrumentoSerializer
     permission_classes = [permissions.AllowAny]
 
 class CalificacionViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet principal para gestionar Calificaciones de riesgo.
+    """
     serializer_class = CalificacionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -62,6 +78,10 @@ class CalificacionViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
     def cargar_csv(self, request):
+        """
+        Procesa la carga masiva de calificaciones desde un archivo CSV/JSON.
+        """
+        logger.info(f"Iniciando carga masiva de CSV por usuario: {request.user.username}")
         """
         Endpoint: POST /api/calificaciones/calificaciones/cargar_csv/
         Frontend: NUAM/src/services/calificacionesService.js - método cargarCSV()
@@ -433,3 +453,5 @@ class ReporteViewSet(viewsets.ReadOnlyModelViewSet):
         
         # Retornar todos los reportes ordenados por fecha descendente
         return Reporte.objects.select_related('usuario').order_by('-fecha')
+
+logger = logging.getLogger(__name__)
