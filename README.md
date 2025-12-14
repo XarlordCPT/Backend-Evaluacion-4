@@ -1,5 +1,7 @@
 # Sistema de Gestión de Eventos Tecnológicos (NUAM)
 
+## Integrantes: Benjamin Duarte, Marina Martinez, Cristobal Medina, Patricio Villalobos
+
 Plataforma de microservicios para la gestión de eventos, usuarios y reportes.
 
 ---
@@ -35,7 +37,7 @@ Sigue estos pasos en estricto orden para levantar el entorno completo.
 ### 1. Clonar el Repositorio
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/XarlordCPT/Backend-Evaluacion-4.git
 cd Backend-Evaluacion-4
 ```
 
@@ -48,6 +50,8 @@ El archivo de configuración de entorno no se incluye por seguridad. Debes crear
     *   **Linux/Mac:** `cp .env.example .env`
 
 2.  Abre el archivo `.env` y configura tus credenciales de base de datos (según lo mencionado en el recordatorio arriba).
+    *   **IMPORTANTE**: Para la variable `SECRET_KEY`, usa comillas simples `'tu-clave'` y evita usar caracteres especiales como `$` ya que pueden causar conflictos con Docker.
+    *   *Ejemplo seguro*: `SECRET_KEY='django-insecure-mi-clave-secreta'`
 
 ### 3. Instalar Dependencias
 
@@ -93,6 +97,13 @@ Si ves errores de conexión en las consolas negras:
 1.  Cierra todas las ventanas de terminal.
 2.  Reinicia el script `start_services`.
 3.  Verifica que Docker tenga memoria suficiente.
+4.  **Si es la primera vez o ves errores extraños**:
+    *   Cierra todas las terminales.
+    *   Abre una terminal en la carpeta del proyecto y ejecuta:
+        ```bash
+        docker-compose down
+        ```
+    *   Vuelve a ejecutar el script `start_services`.
 
 ---
 

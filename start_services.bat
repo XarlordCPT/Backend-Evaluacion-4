@@ -3,7 +3,18 @@ echo Iniciando Sistema de Microservicios NUAM (Modo SSL)...
 
 :: 0. Verificar Infraestructura (Kafka + Zookeeper)
 echo Verificando estado de Docker...
+
 docker-compose up -d
+
+echo.
+echo Esperando a que Kafka inicie completamente (20 segundos)...
+echo Esto puede tardar si es la primera vez o el PC es lento.
+timeout /t 20 /nobreak
+
+echo.
+echo Estado de los Contenedores:
+docker-compose ps
+echo.
 
 :: 1. Activar entorno virtual
 if exist "Ambiente-Microservicios\Scripts\activate.bat" (
