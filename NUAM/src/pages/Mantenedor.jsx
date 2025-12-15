@@ -13,6 +13,7 @@ import IngresarFactores from "../components/IngresarFactores";
 import ModificarCalificacion from "../components/ModificarCalificacion";
 import Cargar from "../components/Cargar";
 import CerrarSesionConfirm from "../components/CerrarSesionConfirm";
+import AdminMicroservicios from "../components/AdminMicroservicios";
 
 export default function Mantenedor() {
   const [data, setData] = useState([]);
@@ -37,7 +38,7 @@ export default function Mantenedor() {
   const [showModalCarga, setShowModalCarga] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
-  const [isOpeningAdmin, setIsOpeningAdmin] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
 
   const { logout, user } = useAuth();
   const navigate = useNavigate();
@@ -255,86 +256,7 @@ export default function Mantenedor() {
     navigate("/login");
   };
 
-  const handleAdminRedirect = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
 
-    if (isOpeningAdmin) {
-      return;
-    }
-
-    try {
-      setIsOpeningAdmin(true);
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        alert('No hay sesión activa. Por favor, inicia sesión nuevamente.');
-        setIsOpeningAdmin(false);
-        return;
-      }
-
-      const response = await fetch(`${API_BASE_URL_AUTH}/api/auth/admin-login-token/`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          try {
-            await authService.refreshAccessToken();
-            const retryResponse = await fetch(`${API_BASE_URL_AUTH}/api/auth/admin-login-token/`, {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                'Content-Type': 'application/json',
-              },
-            });
-            if (!retryResponse.ok) {
-              const errorData = await retryResponse.json().catch(() => ({}));
-              alert(`Error: ${errorData.detail || 'No se pudo obtener acceso al administrador'}`);
-              setIsOpeningAdmin(false);
-              return;
-            }
-            const data = await retryResponse.json();
-            const adminLoginUrl = `${API_BASE_URL_AUTH}${data.admin_login_url}`;
-            const newWindow = window.open(adminLoginUrl, '_blank', 'noopener,noreferrer');
-            if (!newWindow) {
-              alert('Por favor, permite las ventanas emergentes para acceder al administrador.');
-            }
-            setIsOpeningAdmin(false);
-            return;
-          } catch (refreshError) {
-            alert('La sesión ha expirado. Por favor, inicia sesión nuevamente.');
-            setIsOpeningAdmin(false);
-            return;
-          }
-        }
-        const errorData = await response.json().catch(() => ({}));
-        alert(`Error: ${errorData.detail || 'No se pudo obtener acceso al administrador'}`);
-        setIsOpeningAdmin(false);
-        return;
-      }
-
-      const data = await response.json();
-      const adminLoginUrl = `${API_BASE_URL_AUTH}${data.admin_login_url}`;
-
-      const newWindow = window.open(adminLoginUrl, '_blank', 'noopener,noreferrer');
-
-      if (!newWindow) {
-        alert('Por favor, permite las ventanas emergentes para acceder al administrador.');
-      }
-
-      setTimeout(() => {
-        setIsOpeningAdmin(false);
-      }, 500);
-    } catch (error) {
-      console.error('Error al redirigir al administrador:', error);
-      alert('Error al intentar acceder al administrador. Por favor, intenta nuevamente.');
-      setIsOpeningAdmin(false);
-    }
-  };
 
   const handleClearFilters = () => {
     setFilters({
@@ -481,11 +403,10 @@ export default function Mantenedor() {
           {user?.rol && user.rol.toLowerCase() === "administrador" && (
             <button
               type="button"
-              onClick={handleAdminRedirect}
-              disabled={isOpeningAdmin}
-              className="bg-blue-600 text-white px-3 py-1 rounded font-semibold hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setShowAdminModal(true)}
+              className="bg-blue-600 text-white px-3 py-1 rounded font-semibold hover:bg-blue-700 transition-all"
             >
-              {isOpeningAdmin ? 'Abriendo...' : 'Administrador'}
+              Administrador
             </button>
           )}
           {user?.rol && user.rol.toLowerCase() === "administrador" && (
@@ -800,6 +721,12 @@ export default function Mantenedor() {
         <CerrarSesionConfirm
           onConfirm={confirmarLogout}
           onCancel={() => setShowConfirmLogout(false)}
+        />
+      )}
+
+      {showAdminModal && (
+        <AdminMicroservicios
+          onClose={() => setShowAdminModal(false)}
         />
       )}
     </div>

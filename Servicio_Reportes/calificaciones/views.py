@@ -1,5 +1,10 @@
 from django.db.models.signals import pre_delete
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+import secrets
+from django.core.cache import cache
+from django.contrib.auth import login
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseForbidden, HttpResponse
 from django.db.models import Count, Q, Avg, Sum
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
@@ -433,3 +438,64 @@ class ReporteViewSet(viewsets.ReadOnlyModelViewSet):
         
         # Retornar todos los reportes ordenados por fecha descendente
         return Reporte.objects.select_related('usuario').order_by('-fecha')
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_login_token(request):
+    """
+    Endpoint: GET /api/calificaciones/admin-login-token/
+    Frontend: Usado para obtener token temporal para acceder al admin de Django
+    Retorna: { temp_token: "...", admin_login_url: "/api/calificaciones/admin-login/<token>/" }
+    """
+    user = request.user
+    
+    # Verificar que el usuario tenga is_staff=True
+    if not user.is_staff:
+        return Response(
+            {'detail': 'No tienes permisos para acceder al panel de administración.'},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    # Generar un token temporal único
+    temp_token = secrets.token_urlsafe(32)
+    
+    # Almacenar el token en cache con la información del usuario (válido por 5 minutos)
+    cache.set(f'admin_login_{temp_token}', user.id, timeout=300)
+    
+    # Devolver el token temporal
+    admin_login_url = f'/api/calificaciones/admin-login/{temp_token}/'
+    return Response({
+        'temp_token': temp_token,
+        'admin_login_url': admin_login_url
+    })
+
+@csrf_exempt
+def admin_login_redirect(request, temp_token):
+    """
+    Vista que autentica al usuario usando un token temporal y lo redirige al admin.
+    """
+    # Verificar el token temporal
+    user_id = cache.get(f'admin_login_{temp_token}')
+    
+    if not user_id:
+        return HttpResponseForbidden("Token Inválido o Expirado")
+    
+    # Obtener el usuario
+    try:
+        user = Usuario.objects.get(pk=user_id)
+    except Usuario.DoesNotExist:
+        return HttpResponseForbidden("Usuario No Encontrado")
+    
+    # Verificar que el usuario tenga is_staff=True
+    if not user.is_staff:
+        return HttpResponseForbidden("Acceso Denegado")
+    
+    # Eliminar el token temporal
+    cache.delete(f'admin_login_{temp_token}')
+    
+    # Autenticar al usuario
+    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    request.session.save()
+    
+    # Redirigir al admin
+    return redirect('/admin/')

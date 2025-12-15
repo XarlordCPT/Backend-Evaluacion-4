@@ -104,6 +104,12 @@ Si ves errores de conexión en las consolas negras:
         docker-compose down
         ```
     *   Vuelve a ejecutar el script `start_services`.
+    **En caso de que no funcione, prueba borrar el contenedor:**
+    *   Cierra las terminales, abre una terminal en la carpeta del proyecto y ejecuta este comando:
+    *   ```bash
+        docker-compose rm -v
+        ```
+    *   Y vuelve a ejecutar el script `start_services`.
 
 ---
 

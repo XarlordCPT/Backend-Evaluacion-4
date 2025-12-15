@@ -28,4 +28,6 @@ router.register(r'calificaciones', views.CalificacionViewSet, basename='califica
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('admin-login-token/', views.admin_login_token, name='admin_login_token'),
+    path('admin-login/<str:temp_token>/', views.admin_login_redirect, name='admin_login_redirect'),
 ]
