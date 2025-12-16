@@ -33,7 +33,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
-        # Llamar al mÃ©todo padre para obtener la respuesta estÃ¡ndar (tokens)
+        # Llamar al método padre para obtener la respuesta estándar (tokens)
         response = super().post(request, *args, **kwargs)
 
         # Si el login fue exitoso (status 200), enviar evento a Kafka
@@ -41,7 +41,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
             try:
                 username = request.data.get('username') or request.data.get('email', 'unknown')
                 
-                # Intentar obtener el username real si se usÃ³ email
+                # Intentar obtener el username real si se usó email
                 if '@' in username: 
                     try:
                         user = Usuario.objects.get(email=username)
@@ -66,7 +66,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
         return response
 
 # Endpoint de login: POST /api/auth/token/
-# Frontend: NUAM/src/services/authService.js - mÃ©todo login()
+# Frontend: NUAM/src/services/authService.js - método login()
 # Recibe: { username, password }
 # Retorna: { access: "token", refresh: "token" }
 # Guarda tokens en localStorage del frontend
@@ -84,15 +84,15 @@ def admin_login_token(request):
     # Verificar que el usuario tenga is_staff=True
     if not user.is_staff:
         return Response(
-            {'detail': 'No tienes permisos para acceder al panel de administraciÃ³n.'},
+            {'detail': 'No tienes permisos para acceder al panel de administración.'},
             status=status.HTTP_403_FORBIDDEN
         )
     
-    # Generar un token temporal Ãºnico
+    # Generar un token temporal único
     temp_token = secrets.token_urlsafe(32)
     
-    # Almacenar el token en cache con la informaciÃ³n del usuario (vÃ¡lido por 5 minutos)
-    # Aumentamos el tiempo para dar mÃ¡s margen al usuario
+    # Almacenar el token en cache con la información del usuario (válido por 5 minutos)
+    # Aumentamos el tiempo para dar más margen al usuario
     cache.set(f'admin_login_{temp_token}', user.id, timeout=300)
     
     # Devolver el token temporal
@@ -107,8 +107,8 @@ def admin_login_token(request):
 def admin_login_redirect(request, temp_token):
     """
     Vista que autentica al usuario usando un token temporal y lo redirige al admin.
-    Esta vista crea una sesiÃ³n HTTP de Django para que el usuario pueda acceder al admin.
-    NO usa @api_view para poder manejar correctamente las cookies de sesiÃ³n.
+    Esta vista crea una sesión HTTP de Django para que el usuario pueda acceder al admin.
+    NO usa @api_view para poder manejar correctamente las cookies de sesión.
     """
     # Verificar el token temporal
     user_id = cache.get(f'admin_login_{temp_token}')
@@ -118,11 +118,11 @@ def admin_login_redirect(request, temp_token):
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Token InvÃ¡lido</title>
+            <title>Token Inválido</title>
             <meta charset="utf-8">
         </head>
         <body>
-            <h1>Token InvÃ¡lido o Expirado</h1>
+            <h1>Token Inválido o Expirado</h1>
             <p>El token de acceso ha expirado. Por favor, intenta nuevamente.</p>
             <p><a href="javascript:window.close()">Cerrar ventana</a></p>
         </body>
@@ -161,7 +161,7 @@ def admin_login_redirect(request, temp_token):
         </head>
         <body>
             <h1>Acceso Denegado</h1>
-            <p>No tienes permisos para acceder al panel de administraciÃ³n.</p>
+            <p>No tienes permisos para acceder al panel de administración.</p>
             <p><a href="javascript:window.close()">Cerrar ventana</a></p>
         </body>
         </html>
@@ -171,8 +171,8 @@ def admin_login_redirect(request, temp_token):
     # Eliminar el token temporal (solo se puede usar una vez)
     cache.delete(f'admin_login_{temp_token}')
     
-    # Crear una sesiÃ³n de Django para el usuario y autenticarlo
-    # login() automÃ¡ticamente crea una sesiÃ³n si no existe
+    # Crear una sesión de Django para el usuario y autenticarlo
+    # login() automáticamente crea una sesión si no existe
     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
     
     # Verificar que el login fue exitoso
@@ -185,20 +185,20 @@ def admin_login_redirect(request, temp_token):
             <meta charset="utf-8">
         </head>
         <body>
-            <h1>Error de AutenticaciÃ³n</h1>
-            <p>No se pudo establecer la sesiÃ³n. Por favor, intenta nuevamente.</p>
+            <h1>Error de Autenticación</h1>
+            <p>No se pudo establecer la sesión. Por favor, intenta nuevamente.</p>
             <p><a href="javascript:window.close()">Cerrar ventana</a></p>
         </body>
         </html>
         """
         return HttpResponseForbidden(html_error)
     
-    # Asegurar que la sesiÃ³n se guarde
-    # Django guarda automÃ¡ticamente la sesiÃ³n despuÃ©s de login(), pero lo forzamos explÃ­citamente
+    # Asegurar que la sesión se guarde
+    # Django guarda automáticamente la sesión después de login(), pero lo forzamos explícitamente
     request.session.save()
     
     # Redirigir al admin
-    # Django redirect() automÃ¡ticamente establece las cookies de sesiÃ³n
+    # Django redirect() automáticamente establece las cookies de sesión
     return redirect('/admin/')
 
 
@@ -207,10 +207,10 @@ def admin_login_redirect(request, temp_token):
 def request_password_reset(request):
     """
     Endpoint: POST /api/auth/password-reset/request/
-    Frontend: NUAM/src/services/authService.js - mÃ©todo requestPasswordReset()
+    Frontend: NUAM/src/services/authService.js - método requestPasswordReset()
     Recibe: { email: "usuario@ejemplo.com" }
     Retorna: { message: "...", user_id: 123 }
-    EnvÃ­a cÃ³digo de 6 dÃ­gitos por email (vÃ¡lido 10 minutos)
+    Envía código de 6 dígitos por email (válido 10 minutos)
     """
     email = request.data.get('email', '').strip()
     
@@ -227,7 +227,7 @@ def request_password_reset(request):
         # No revelar si el email existe o no por seguridad
         # Pero el usuario pidiÃ³ mostrar error si no existe
         return Response(
-            {'error': 'No existe un usuario asociado a este correo electrÃ³nico'},
+            {'error': 'No existe un usuario asociado a este correo electrónico'},
             status=status.HTTP_404_NOT_FOUND
         )
     
@@ -235,20 +235,21 @@ def request_password_reset(request):
     reset_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
     
     # Guardar cÃ³digo en cache con expiraciÃ³n de 10 minutos
+    # Guardar código en cache con expiración de 10 minutos
     cache_key = f'password_reset_{usuario.id}'
     cache.set(cache_key, reset_code, timeout=600)
     
-    # Enviar email con el cÃ³digo
+    # Enviar email con el código
     try:
-        subject = 'CÃ³digo de recuperaciÃ³n de contraseÃ±a'
+        subject = 'Código de recuperación de contraseña'
         message = f'''
 Hola {usuario.username},
 
-Se ha solicitado recuperar la contraseÃ±a de tu usuario. 
+Se ha solicitado recuperar la contraseña de tu usuario. 
 
-Tu cÃ³digo de verificaciÃ³n es: {reset_code}
+Tu código de verificación es: {reset_code}
 
-Este cÃ³digo expirarÃ¡ en 10 minutos.
+Este código expirará en 10 minutos.
 
 Si no solicitaste este cambio, ignora este mensaje.
 
@@ -266,14 +267,14 @@ Equipo Desarrollo Proyecto NUAM
     except Exception as e:
         print(f'Error al enviar email: {e}')
         return Response(
-            {'error': 'Error al enviar el cÃ³digo. Por favor, intenta nuevamente.'},
+            {'error': 'Error al enviar el código. Por favor, intenta nuevamente.'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
     
     return Response(
         {
-            'message': 'CÃ³digo de verificaciÃ³n enviado a tu correo electrÃ³nico',
-            'user_id': usuario.id  # Necesario para la siguiente peticiÃ³n
+            'message': 'Código de verificación enviado a tu correo electrónico',
+            'user_id': usuario.id  # Necesario para la siguiente petición
         },
         status=status.HTTP_200_OK
     )
@@ -284,10 +285,10 @@ Equipo Desarrollo Proyecto NUAM
 def validate_reset_code(request):
     """
     Endpoint: POST /api/auth/password-reset/validate/
-    Frontend: NUAM/src/services/authService.js - mÃ©todo validatePasswordResetCode()
+    Frontend: NUAM/src/services/authService.js - método validatePasswordResetCode()
     Recibe: { user_id: 123, code: "123456" }
-    Retorna: { message: "CÃ³digo vÃ¡lido", valid: true }
-    Valida el cÃ³digo antes de permitir cambio de contraseÃ±a (paso 2 del flujo)
+    Retorna: { message: "Código válido", valid: true }
+    Valida el código antes de permitir cambio de contraseña (paso 2 del flujo)
     """
     user_id = request.data.get('user_id')
     code = request.data.get('code', '').strip()
@@ -306,25 +307,25 @@ def validate_reset_code(request):
             status=status.HTTP_404_NOT_FOUND
         )
     
-    # Verificar cÃ³digo
+    # Verificar código
     cache_key = f'password_reset_{usuario.id}'
     stored_code = cache.get(cache_key)
     
     if not stored_code:
         return Response(
-            {'error': 'CÃ³digo expirado o invÃ¡lido. Por favor, solicita un nuevo cÃ³digo.'},
+            {'error': 'Código expirado o inválido. Por favor, solicita un nuevo código.'},
             status=status.HTTP_400_BAD_REQUEST
         )
     
     if stored_code != code:
         return Response(
-            {'error': 'CÃ³digo incorrecto'},
+            {'error': 'Código incorrecto'},
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    # CÃ³digo vÃ¡lido
+    # Código válido
     return Response(
-        {'message': 'CÃ³digo vÃ¡lido', 'valid': True},
+        {'message': 'Código válido', 'valid': True},
         status=status.HTTP_200_OK
     )
 
@@ -334,10 +335,10 @@ def validate_reset_code(request):
 def verify_reset_code(request):
     """
     Endpoint: POST /api/auth/password-reset/verify/
-    Frontend: NUAM/src/services/authService.js - mÃ©todo verifyPasswordReset()
+    Frontend: NUAM/src/services/authService.js - método verifyPasswordReset()
     Recibe: { user_id: 123, code: "123456", new_password: "nueva_clave" }
-    Retorna: { message: "ContraseÃ±a actualizada exitosamente" }
-    Paso 3: Verifica cÃ³digo y cambia la contraseÃ±a
+    Retorna: { message: "Contraseña actualizada exitosamente" }
+    Paso 3: Verifica código y cambia la contraseña
     """
     user_id = request.data.get('user_id')
     code = request.data.get('code', '').strip()
@@ -351,13 +352,13 @@ def verify_reset_code(request):
     
     if not new_password:
         return Response(
-            {'error': 'La nueva contraseÃ±a es requerida'},
+            {'error': 'La nueva contraseña es requerida'},
             status=status.HTTP_400_BAD_REQUEST
         )
     
     if len(new_password) < 8:
         return Response(
-            {'error': 'La contraseÃ±a debe tener al menos 8 caracteres'},
+            {'error': 'La contraseña debe tener al menos 8 caracteres'},
             status=status.HTTP_400_BAD_REQUEST
         )
     
@@ -369,31 +370,31 @@ def verify_reset_code(request):
             status=status.HTTP_404_NOT_FOUND
         )
     
-    # Verificar cÃ³digo
+    # Verificar código
     cache_key = f'password_reset_{usuario.id}'
     stored_code = cache.get(cache_key)
     
     if not stored_code:
         return Response(
-            {'error': 'CÃ³digo expirado o invÃ¡lido. Por favor, solicita un nuevo cÃ³digo.'},
+            {'error': 'Código expirado o inválido. Por favor, solicita un nuevo código.'},
             status=status.HTTP_400_BAD_REQUEST
         )
     
     if stored_code != code:
         return Response(
-            {'error': 'CÃ³digo incorrecto'},
+            {'error': 'Código incorrecto'},
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    # CÃ³digo vÃ¡lido, cambiar contraseÃ±a
+    # Código válido, cambiar contraseña
     usuario.set_password(new_password)
     usuario.save()
     
-    # Eliminar cÃ³digo de cache (solo se puede usar una vez)
+    # Eliminar código de cache (solo se puede usar una vez)
     cache.delete(cache_key)
     
     return Response(
-        {'message': 'ContraseÃ±a actualizada exitosamente'},
+        {'message': 'Contraseña actualizada exitosamente'},
         status=status.HTTP_200_OK
     )
 

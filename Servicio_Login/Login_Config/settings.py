@@ -3,7 +3,7 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ConfiguraciÃ³n desde variables de entorno (.env)
+# Configuración desde variables de entorno (.env)
 # Si no existe .env, usa valores por defecto (solo para desarrollo)
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-9e$n2+jr-h5q9^hncb5)vvl3$_11g!uc71y5%!k9=*&$13&f!n')
 DEBUG = config('DEBUG', default=True, cast=bool)
@@ -109,8 +109,8 @@ REST_FRAMEWORK = {
 from datetime import timedelta
 
 # JWT: Frontend debe enviar token en header "Authorization: Bearer <token>"
-# Token de acceso vÃ¡lido por 60 minutos, refresh token por 1 dÃ­a
-# Ver: NUAM/src/services/authService.js - mÃ©todo getAuthHeaders()
+# Token de acceso válido por 60 minutos, refresh token por 1 día
+# Ver: NUAM/src/services/authService.js - método getAuthHeaders()
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -155,7 +155,7 @@ CACHES = {
 
 AUTH_USER_MODEL = 'core.Usuario'
 
-# Email SMTP: Usado para envÃ­o de cÃ³digos de recuperaciÃ³n de contraseÃ±a
+# Email SMTP: Usado para envío de códigos de recuperación de contraseña
 # Endpoint: /api/auth/password-reset/request/ (core/views.py - request_password_reset)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
