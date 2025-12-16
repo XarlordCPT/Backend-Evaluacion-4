@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (Calificacion, Factor, Instrumento, Mercado, TipoAgregacion, Ejercicio, Reporte)
+from .models import (Calificacion, Factor, Instrumento, Mercado, TipoAgregacion, Ejercicio)
 from django.db import transaction
 from .signals import set_current_user
 
@@ -122,11 +122,3 @@ class CalificacionSerializer(serializers.ModelSerializer):
         finally:
             # Limpiar el usuario del thread-local
             set_current_user(None)
-
-class ReporteSerializer(serializers.ModelSerializer):
-    usuario = serializers.StringRelatedField(read_only=True)
-    
-    class Meta:
-        model = Reporte
-        fields = ['id_reporte', 'usuario', 'accion', 'fecha']
-        read_only_fields = ['id_reporte', 'usuario', 'fecha']

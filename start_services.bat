@@ -9,7 +9,7 @@ docker-compose up -d
 echo.
 echo Esperando a que Kafka inicie completamente (20 segundos)...
 echo Esto puede tardar si es la primera vez o el PC es lento.
-timeout /t 20 /nobreak
+timeout /t 5 /nobreak
 
 echo.
 echo Estado de los Contenedores:

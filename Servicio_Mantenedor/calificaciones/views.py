@@ -19,8 +19,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db import transaction
 from decimal import Decimal, InvalidOperation
-from .models import (Calificacion, Factor, Instrumento, Mercado, TipoAgregacion, Ejercicio, Reporte, Usuario)
-from .serializers import (CalificacionSerializer, FactorSerializer, InstrumentoSerializer, MercadoSerializer, TipoAgregacionSerializer, EjercicioSerializer, ReporteSerializer)
+from .models import (Calificacion, Factor, Instrumento, Mercado, TipoAgregacion, Ejercicio, Usuario)
+from .serializers import (CalificacionSerializer, FactorSerializer, InstrumentoSerializer, MercadoSerializer, TipoAgregacionSerializer, EjercicioSerializer)
 from .signals import set_current_user
 
 class MercadoViewSet(viewsets.ModelViewSet):
@@ -431,33 +431,6 @@ def dashboard_stats(request):
             for cal in calificaciones_recientes
         ],
     })
-
-class ReporteViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    ViewSet para reportes de auditoría.
-    Solo lectura, accesible únicamente para administradores.
-    """
-    serializer_class = ReporteSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_queryset(self):
-        # Verificar que el usuario sea administrador
-        user = self.request.user
-        if not user.is_authenticated:
-            return Reporte.objects.none()
-        
-        # Verificar si es administrador por rol o is_staff
-        is_admin = False
-        if user.is_staff:
-            is_admin = True
-        elif user.rol and user.rol.nombre_rol.lower() == "administrador":
-            is_admin = True
-        
-        if not is_admin:
-            return Reporte.objects.none()
-        
-        # Retornar todos los reportes ordenados por fecha descendente
-        return Reporte.objects.select_related('usuario').order_by('-fecha')
 
 
 @api_view(['GET'])

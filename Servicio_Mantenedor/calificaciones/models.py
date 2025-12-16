@@ -124,21 +124,3 @@ class Factor(models.Model):
     
     class Meta:
         unique_together = ('calificacion', 'numero_factor')
-
-#......................................................
-
-class Reporte(models.Model):
-    id_reporte = models.AutoField(primary_key=True)
-    usuario = models.ForeignKey(
-        Usuario,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-    accion = models.TextField()
-    fecha = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        fecha_hora = self.fecha.strftime('%Y-%m-%d %H:%M')
-        usuario = self.usuario.username if self.usuario else "Sistema"
-        return f"[{fecha_hora}] ({usuario}) - {self.accion[:40]}..."

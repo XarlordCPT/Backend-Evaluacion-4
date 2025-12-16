@@ -5,6 +5,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 urlpatterns = [
     path('admin/dashboard-stats/', calificaciones_views.dashboard_stats, name='dashboard_stats'),
+
     path('admin/', admin.site.urls),
     
     path('api/calificaciones/', include('calificaciones.urls')),

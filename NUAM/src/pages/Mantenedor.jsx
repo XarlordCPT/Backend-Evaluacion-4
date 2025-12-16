@@ -14,6 +14,7 @@ import ModificarCalificacion from "../components/ModificarCalificacion";
 import Cargar from "../components/Cargar";
 import CerrarSesionConfirm from "../components/CerrarSesionConfirm";
 import AdminMicroservicios from "../components/AdminMicroservicios";
+import RelojPaises from "../components/RelojPaises";
 
 export default function Mantenedor() {
   const [data, setData] = useState([]);
@@ -393,6 +394,7 @@ export default function Mantenedor() {
       <div className="bg-[#404040] p-4 flex justify-between items-center text-orange-500">
         <h1 className="font-bold text-lg">Mantenedor de Calificaciones Tributarias</h1>
         <div className="flex items-center gap-2">
+          <RelojPaises />
           <button
             onClick={() => navigate("/perfil")}
             className="hover:opacity-80 transition-opacity cursor-pointer"

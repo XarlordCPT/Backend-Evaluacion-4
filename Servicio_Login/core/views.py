@@ -9,7 +9,9 @@ import secrets
 import json
 import random
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.authentication import SessionAuthentication
+
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -461,3 +463,40 @@ def logout_view(request):
         print(f'Error enviando evento logout a Kafka: {e}')
     
     return Response({'message': 'Sesión cerrada exitosamente'}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def dashboard_stats(request):
+    """
+    Endpoint para estadísticas del dashboard de administración de Login.
+    """
+    if not request.user.is_staff:
+        return HttpResponseForbidden("Acceso denegado")
+
+    total_usuarios = Usuario.objects.count()
+    usuarios_activos = Usuario.objects.filter(is_active=True).count()
+    usuarios_staff = Usuario.objects.filter(is_staff=True).count()
+    
+    # Usuarios recientes
+    usuarios_recientes = Usuario.objects.order_by('-date_joined')[:5]
+    recientes_data = [
+        {
+            'id': u.id,
+            'username': u.username,
+            'email': u.email,
+            'fecha_registro': u.date_joined.strftime('%Y-%m-%d %H:%M') if u.date_joined else 'N/A',
+            'is_active': u.is_active
+        }
+        for u in usuarios_recientes
+    ]
+
+    return JsonResponse({
+        'totales': {
+            'usuarios': total_usuarios,
+            'activos': usuarios_activos,
+            'staff': usuarios_staff
+        },
+        'usuarios_recientes': recientes_data
+    })
