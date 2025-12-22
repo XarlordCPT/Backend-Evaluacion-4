@@ -6,12 +6,15 @@ echo "Iniciando Sistema de Microservicios NUAM (Modo SSL - Linux)..."
 open_terminal() {
     TITLE=$1
     CMD=$2
-    if command -v gnome-terminal &> /dev/null; then
+    # 1. PREGUNTAR PRIMERO POR XTERM (La opción segura)
+    if command -v xterm &> /dev/null; then
+        xterm -T "$TITLE" -hold -e "bash -c \"$CMD\"" &
+    # 2. Si no hay xterm, intentar Gnome
+    elif command -v gnome-terminal &> /dev/null; then
         gnome-terminal --title="$TITLE" -- bash -c "$CMD; exec bash"
+    # 3. Luego Konsole
     elif command -v konsole &> /dev/null; then
-        konsole --new-tab --title "$TITLE" -e bash -c "$CMD; exec bash"
-    elif command -v xterm &> /dev/null; then
-        xterm -T "$TITLE" -e "bash -c \"$CMD; exec bash\"" &
+        konsole --new-tab --title "$TITLE" -e bash -c "$CMD; exec bash" 
     else
         echo "[WARNING] No se encontró terminal compatible. Ejecutando $TITLE en segundo plano..."
         nohup bash -c "$CMD" > "${TITLE// /_}.log" 2>&1 &
