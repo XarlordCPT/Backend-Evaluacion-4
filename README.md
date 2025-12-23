@@ -77,6 +77,14 @@ Una vez configurado e instalado, utiliza los scripts de inicio para levantar tod
     ./start_services.sh
     ```
 
+### 5. Acceso al Sistema
+
+Una vez que todos los servicios se hayan iniciado correctamente, abre tu navegador web y accede a la siguiente URL para entrar a la aplicación:
+
+👉 **[https://localhost:5173](https://localhost:5173)**
+
+> **Nota:** Al usar certificados SSL de desarrollo, es normal que el navegador muestre una advertencia de "La conexión no es privada". Debes hacer clic en **"Configuración avanzada"** y luego en **"Continuar a localhost (no seguro)"**.
+
 ---
 
 ## 🛠 Solución de Problemas (Troubleshooting)
